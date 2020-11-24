@@ -93,7 +93,7 @@
   [file-or-resource-path slurp-opts]
   (let [source (file-or-resource file-or-resource-path)]
     (when source
-      (let [ret (ig/read-string (apply slurp source slurp-opts))]
+      (let [ret (ig/read-string (apply slurp source (into [] cat slurp-opts)))]
         (if (map? ret)
           ret
           (throw
