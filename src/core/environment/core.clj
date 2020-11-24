@@ -72,3 +72,12 @@
     (cond
       (.isFile file) file
       :else          resource)))
+
+
+;; * properties
+
+
+(defn set-properties!
+  "init-time fn"
+  [{:keys [volume-dir]}]
+  (when (string? volume-dir) (System/setProperty "environment.volume.directory" volume-dir)))
