@@ -12,15 +12,22 @@
   {
    :extra-deps
    {
-    org.clojure/clojure {:mvn/version "1.10.2-alpha4"}
     hawk/hawk           {:mvn/version "0.2.11"}
     integrant/integrant {:mvn/version "0.8.0"}
+    org.clojure/clojure {:mvn/version "1.10.2-alpha4"}
     }}
 
   :test
   {
    :extra-paths ["src/test"]
-   }
+   :extra-deps
+   {
+    ;; user.tools.deps.alpha maven jar depends user.java.io artifact which is aot-compiled.
+    ;; so avoid maven procurer.
+    user.java.time/user.java.time               {:mvn/version "2020.267.10158"}
+    user.tools.deps.alpha/user.tools.deps.alpha {:git/url "https://github.com/aJchemist/user.tools.deps.alpha.git" :sha "d90daa79a7bf359efe620cb7eb57f4445708bdbd"}
+    org.clojure/tools.deps.alpha                {:mvn/version "0.9.821"}
+    }}
 
 
   :test-runner
