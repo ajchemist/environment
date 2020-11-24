@@ -99,3 +99,9 @@
           (throw
             (let [path (str source)]
               (ex-info (format "Expected edn map in: %s" path) {:path path}))))))))
+
+
+;; * system
+
+
+(def *system (atom {}))
