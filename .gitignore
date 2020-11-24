@@ -1,0 +1,17 @@
+.clj-kondo/.cache
+.cpcache
+.eastwood
+.nrepl*
+# .ci/settings.xml
+classes
+out
+node_modules
+yarn*
+*.xls*
+/volume
+/volumes
+/target
+*.bin
+
+
+/server-render-test
