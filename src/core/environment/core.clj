@@ -65,7 +65,9 @@
 
 
 (defn file-or-resource
-  "CAUTION: Don't use this fn in runtime, only use in init-time."
+  "CAUTION: Don't use this fn in runtime, only use in init-time.
+
+  but used in runtime when a proper resource is settled."
   [path]
   (let [file     (jio/file *volume-directory* path)
         resource (jio/resource path)]
@@ -81,3 +83,19 @@
   "init-time fn"
   [{:keys [volume-dir]}]
   (when (string? volume-dir) (System/setProperty "environment.volume.directory" volume-dir)))
+
+
+;; * integrant
+
+
+(defn slurp-system-map
+  "Read the file-or-resource specified by the path-segments, slurp it, and read it as edn."
+  [file-or-resource-path slurp-opts]
+  (let [source (file-or-resource file-or-resource-path)]
+    (when source
+      (let [ret (ig/read-string (apply slurp source slurp-opts))]
+        (if (map? ret)
+          ret
+          (throw
+            (let [path (str source)]
+              (ex-info (format "Expected edn map in: %s" path) {:path path}))))))))
