@@ -10,9 +10,6 @@
 (def watch-dir (doto (jio/file "server-render-test") (.mkdir)))
 
 
-(def file-source (jio/file watch-dir "server-render.edn"))
-
-
 (def system-map
   (-> (env.server-render/system-map {:watch-dir watch-dir})
     #_(assoc-in [::env.server-render/file-source-watcher-args :callback]
@@ -24,8 +21,15 @@
 
 
 (deftest main
-  (jio/delete-file file-source true)
+  (jio/delete-file (::env.server-render/source system-map) true)
+  (def system (-> system-map (ig/prep) (ig/init)))
   (is (empty? @(val (ig/find-derived-1 system ::env.server-render/reference))))
-  (spit file-source "{:x :y}")
+  (spit (::env.server-render/source system-map) "{:x :y}")
   (Thread/sleep 2000)
-  (is (= :y (:x @(val (ig/find-derived-1 system ::env.server-render/reference))))))
+  (is (= :y (:x @(val (ig/find-derived-1 system ::env.server-render/reference)))))
+  )
+
+
+(comment
+  (ig/halt! system)
+  )
