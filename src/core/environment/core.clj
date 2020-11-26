@@ -43,7 +43,11 @@
 ;; * Profiled
 
 
-(def ^:dynamic *profile* (or (keyword (System/getProperty "environment.profile")) :dev))
+(def ^:dynamic *profile*
+  (or
+    (keyword (System/getProperty "environment.profile"))
+    (keyword (System/getenv "ENVIRONMENT_PROFILE"))
+    :dev))
 
 
 (defn elide-profile-code?
