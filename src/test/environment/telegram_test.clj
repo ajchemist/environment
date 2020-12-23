@@ -32,6 +32,5 @@
     (tg/client
       {:telegram/method "/sendMessage"
        :telegram/token  tg-token
-       :form-params     {:chat_id tg-chat-id :text (str "Message from test-runner <" (subs gh-sha 0 8) ">.")}
-       })
+       :form-params     {:chat_id tg-chat-id :text (str "Message from test-runner <" (subs gh-sha 0 8) ">.")}})
     ))
