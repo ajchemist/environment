@@ -19,6 +19,11 @@
      (catch Exception _ {}))))
 
 
+(defn update-config
+  [old new]
+  (if (seq new) new old))
+
+
 (defmethod ig/init-key ::reference
   [_ source]
   (atom (read-file source)))
@@ -37,7 +42,7 @@
        :filter (env.hawk/file-changed? source)
        :handler
        (fn [ctx {:keys [file] :as event}]
-         (reset! reference (read-file file))
+         (swap! reference update-config (read-file source))
          (println "server-render file-source changed.")
          (callback reference ctx event))}]]))
 
