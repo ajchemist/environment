@@ -12,9 +12,14 @@
   {
    :extra-deps
    {
-    hawk/hawk           {:mvn/version "0.2.11"}
     integrant/integrant {:mvn/version "0.8.0"}
-    org.clojure/clojure {:mvn/version "1.10.2-alpha4"}
+    org.clojure/clojure {:mvn/version "1.10.2-rc1"}
+
+    hawk/hawk {:mvn/version "0.2.11"}
+
+    clj-http/clj-http   {:mvn/version "3.11.0"}
+    cheshire/cheshire   {:mvn/version "5.10.0"}
+    user.ring/user.ring {:mvn/version "2020.351.49995"}
     }}
 
   :test
