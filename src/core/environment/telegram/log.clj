@@ -1,7 +1,7 @@
 (ns environment.telegram.log
   (:require
    [clojure.spec.alpha :as s]
-   [environment.telegram :as tg]
+   [telegram.core.alpha :as tg]
    ))
 
 
