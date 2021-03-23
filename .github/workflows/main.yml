@@ -15,6 +15,7 @@ jobs:
     strategy:
       matrix:
         java: [ "11" ]
+        clojure: [ "1.10.3.814" ]
     name: test @ JDK = ${{ matrix.java }} CLJ = ${{ matrix.clojure }}
     steps:
       - uses: actions/checkout@v2
@@ -39,13 +40,19 @@ jobs:
       - name: Set up clojure-cli
         uses: DeLaGuardo/setup-clojure@master
         with:
-          cli: '1.10.1.727'
+          cli: ${{ matrix.clojure }}
       - name: Test runner
+        run: clojure -M:provided:test:test-runner
+
+
+      - name: Job digest -> telegram
         env:
-          TESTOPT: "-M:provided:test:test-runner"
-          TG_TOKEN: ${{ secrets.TG_TOKEN }}
-          TG_CHAT_ID: ${{ secrets.TG_CHAT_ID }}
-        run: clojure $TESTOPT
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_TO: ${{ secrets.TELEGRAM_TO }}
+          JOB_CONTEXT: ${{ toJSON(job) }}
+          GITHUB_CONTEXT: ${{ toJSON(github) }}
+        run: |
+          clojure -X:provided:test github.core.alpha.actions-helper.telegram/send-job-digest
 
 
   package:
@@ -85,7 +92,7 @@ jobs:
       - name: Set up clojure-cli
         uses: DeLaGuardo/setup-clojure@master
         with:
-          cli: '1.10.1.727'
+          cli: '1.10.3.814'
 
 
       - name: Make package
@@ -109,6 +116,16 @@ jobs:
           git commit -m "$(clojure -A:provided:test -m user.apache.maven.script.get-pom-version) [ci skip]"
           git remote -v
           git push
+
+
+      - name: Job digest -> telegram
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_TO: ${{ secrets.TELEGRAM_TO }}
+          JOB_CONTEXT: ${{ toJSON(job) }}
+          GITHUB_CONTEXT: ${{ toJSON(github) }}
+        run: |
+          clojure -X:provided:test github.core.alpha.actions-helper.telegram/send-job-digest
 
 
       - uses: 8398a7/action-slack@v3.5.0

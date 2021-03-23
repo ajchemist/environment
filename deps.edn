@@ -13,11 +13,11 @@
    :extra-deps
    {
     integrant/integrant {:mvn/version "0.8.0"}
-    org.clojure/clojure {:mvn/version "1.10.2-rc1"}
+    org.clojure/clojure {:mvn/version "1.10.3"}
 
     hawk/hawk {:mvn/version "0.2.11"}
 
-    clj-http/clj-http {:mvn/version "3.11.0"}
+    clj-http/clj-http {:mvn/version "3.12.1"}
     cheshire/cheshire {:mvn/version "5.10.0"}
 
     ajchemist/telegram.clj {:mvn/version "2021.80.46708"}
@@ -29,6 +29,10 @@
    :extra-paths ["src/test"]
    :extra-deps
    {
+    rum/rum                    {:mvn/version "0.11.5"}
+    ajchemist/github.clj.alpha {:mvn/version "2021.80.46410"}
+
+
     ;; user.tools.deps.alpha maven jar depends user.java.io artifact which is aot-compiled.
     ;; so avoid maven procurer.
     user.java.time/user.java.time               {:mvn/version "2020.267.10158"}
