@@ -3,6 +3,6 @@
   )
  (clojure-mode
   ;; (cider-clojure-cli-global-options . "")
-  (cider-clojure-cli-parameters . "-M:provided:test -m nrepl.cmdline --middleware '%s'")
+  (cider-clojure-cli-aliases . "provided:test")
   (cider-default-cljs-repl . figwheel-main)
   (clojure-local-source-test-path . "src/test")))
