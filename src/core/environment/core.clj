@@ -1,5 +1,6 @@
 (ns environment.core
   (:require
+   [clojure.edn :as edn]
    [clojure.java.io :as jio]
    [integrant.core :as ig]
    )
@@ -89,20 +90,55 @@
   (when (string? volume-dir) (System/setProperty "environment.volume.directory" volume-dir)))
 
 
-;; * integrant
+;; * EDN
+
+
+;; ** sources
+
+
+(defprotocol IConfigEDNSource)
+
+
+(defrecord ConfigEDNFileOrResourceSource [file-or-resource]
+  IConfigEDNSource
+  jio/IOFactory
+  (make-reader [_ opts]
+    ;; TODO: log trace level
+    (println "FileOrResourceSource:" (str file-or-resource))
+    (apply jio/reader file-or-resource opts)))
+
+
+(defn config-edn-file-or-resource-source
+  [^String path]
+  (let [x (file-or-resource path)]
+    (when x
+      (->ConfigEDNFileOrResourceSource x))))
+
+
+;; ** slurp
+
+
+(defn slurp-edn-map
+  "Read the file-or-resource specified by the path-segments, slurp it, and read it as edn."
+  ([source slurp-opts]
+   (slurp-edn-map source slurp-opts edn/read-string))
+  ([source slurp-opts read-fn]
+   (when (satisfies? IConfigEDNSource source)
+     (let [ret (read-fn (apply slurp source (into [] cat slurp-opts)))]
+       (if (map? ret)
+         ret
+         (throw
+           (let [path (str source)]
+             (ex-info (format "Expected edn map in: %s" path) {:path path}))))))))
+
+
+;; ** integrant
 
 
 (defn slurp-system-map
   "Read the file-or-resource specified by the path-segments, slurp it, and read it as edn."
-  [file-or-resource-path slurp-opts]
-  (let [source (file-or-resource file-or-resource-path)]
-    (when source
-      (let [ret (ig/read-string (apply slurp source (into [] cat slurp-opts)))]
-        (if (map? ret)
-          ret
-          (throw
-            (let [path (str source)]
-              (ex-info (format "Expected edn map in: %s" path) {:path path}))))))))
+  [source slurp-opts]
+  (slurp-edn-map source slurp-opts ig/read-string))
 
 
 ;; * system
