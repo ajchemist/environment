@@ -3,7 +3,9 @@
    [clojure.edn :as edn]
    [clojure.java.io :as jio]
    [integrant.core :as ig]
-   )
+   [environment.merge :as env.merge]
+
+   [environment.core :as env])
   (:import
    sun.misc.Signal
    sun.misc.SignalHandler
@@ -142,6 +144,33 @@
 
 
 ;; * system
+
+
+(defn merge-system-maps
+  "The first map type return of slurp wins"
+  [rules config sources]
+  (env.merge/merge-maps
+    rules
+    (some
+      (fn [src]
+        (let [system-map (slurp-system-map src (:slurp-opts (meta src)))]
+          (if (map? system-map)
+            system-map
+            nil)))
+      sources)
+    config))
+
+
+(defn merge-system-maps-2
+  "Generous merge-system-maps"
+  [rules config sources]
+  (env.merge/merge-maps
+    rules
+    (apply
+      env.merge/merge-maps
+      rules
+      (map (fn [src] (env/slurp-system-map src (:slurp-opts (meta src)))) sources))
+    config))
 
 
 (def *system (atom {}))
