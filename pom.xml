@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>ajchemist</groupId>
   <artifactId>environment</artifactId>
-  <version>2021.132.50206</version>
+  <version>2021.192.47365</version>
   <repositories>
     <repository>
       <id>clojars</id>
