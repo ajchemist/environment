@@ -174,3 +174,17 @@
 
 
 (def *system (atom {}))
+
+
+;; * Shutdown
+
+
+(defn- halt-system!
+  []
+  (when-let [sys @env/*system]
+    (ig/halt! sys)))
+
+
+(defn install-system-shutdown-hook!
+  []
+  (.addShutdownHook (Runtime/getRuntime) (Thread. halt-system!)))
