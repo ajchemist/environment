@@ -17,34 +17,38 @@
 
     hawk/hawk {:mvn/version "0.2.11"}
 
-    clj-http/clj-http {:mvn/version "3.12.1"}
+    clj-http/clj-http {:mvn/version "3.12.3"}
     cheshire/cheshire {:mvn/version "5.10.0"}
 
-    ajchemist/telegram.clj {:mvn/version "2021.80.46708"}
-    user.ring/user.ring    {:mvn/version "2020.351.49995"}
+    io.github.ajchemist/telegram.clj {:mvn/version "2021.252.12143"}
+    io.github.ajchemist/user.ring    {:mvn/version "2021.252.19860"}
     }}
+
 
   :test
-  {
-   :extra-paths ["src/test"]
-   :extra-deps
-   {
-    rum/rum                    {:mvn/version "0.11.5"}
-    ajchemist/github.clj.alpha {:mvn/version "2021.80.46410"}
-
-
-    ;; user.tools.deps.alpha maven jar depends user.java.io artifact which is aot-compiled.
-    ;; so avoid maven procurer.
-    user.java.time/user.java.time               {:mvn/version "2020.267.10158"}
-    user.tools.deps.alpha/user.tools.deps.alpha {:git/url "https://github.com/aJchemist/user.tools.deps.alpha.git" :sha "d90daa79a7bf359efe620cb7eb57f4445708bdbd"}
-    org.clojure/tools.deps.alpha                {:mvn/version "0.9.821"}
-    }}
+  {:extra-paths ["src/test"]}
 
 
   :test-runner
-  {
-   :extra-deps {com.cognitect/test-runner {:git/url "https://github.com/cognitect-labs/test-runner.git"
-                                           :sha     "209b64504cb3bd3b99ecfec7937b358a879f55c1"}}
-   :main-opts  ["-m" "cognitect.test-runner" "-d" "src/test"]
-   }}
+  {:extra-deps {io.github.cognitect-labs/test-runner {:git/tag "v0.5.0" :git/sha "b3fd0d2"}}
+   :main-opts  ["-m" "cognitect.test-runner"]
+   :exec-fn    cognitect.test-runner.api/test
+   :exec-args  ["src/test"]}
+
+
+  :github-actions-helper
+  {:replace-deps
+   {
+    rum/rum                              {:mvn/version "0.12.6"}
+    io.github.ajchemist/telegram.clj     {:mvn/version "2021.252.12143"}
+    io.github.ajchemist/github.clj.alpha {:mvn/version "2021.252.17497"}
+    }
+   :ns-default github.core.alpha.actions-helper.api}
+
+
+  :build
+  {:deps        {io.github.clojure/tools.build {:git/tag "v0.2.2" :git/sha "3049217"}
+                 user.java.time/user.java.time {:mvn/version "2020.267.10158"}}
+   :extra-paths ["src/test"]
+   :ns-default  build}}
  }

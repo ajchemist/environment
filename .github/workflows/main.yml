@@ -8,6 +8,11 @@ on:
     branches: [ master ]
 
 
+env:
+  clojure-cli: "1.10.3.967"
+  library: io.github.ajchemist/environment
+
+
 jobs:
   test:
     if: "!(contains(github.event.head_commit.message, 'ci skip') || contains(github.event.head_commit.message, 'skip ci'))"
@@ -15,7 +20,7 @@ jobs:
     strategy:
       matrix:
         java: [ "11" ]
-        clojure: [ "1.10.3.814" ]
+        clojure: [ "1.10" ]
     name: test @ JDK = ${{ matrix.java }} CLJ = ${{ matrix.clojure }}
     steps:
       - uses: actions/checkout@v2
@@ -34,25 +39,27 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gitlibs-
       - name: Setup java
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v2
         with:
+          distribution: 'zulu'
           java-version: ${{ matrix.java }}
       - name: Set up clojure-cli
         uses: DeLaGuardo/setup-clojure@master
         with:
-          cli: ${{ matrix.clojure }}
+          cli: ${{ env.clojure-cli }}
       - name: Test runner
-        run: clojure -M:provided:test:test-runner
+        run: clojure -X:provided:test:test-runner
 
 
       - name: Job digest -> telegram
+        if: always()
         env:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           TELEGRAM_TO: ${{ secrets.TELEGRAM_TO }}
           JOB_CONTEXT: ${{ toJSON(job) }}
           GITHUB_CONTEXT: ${{ toJSON(github) }}
         run: |
-          clojure -X:provided:test github.core.alpha.actions-helper.telegram/send-job-digest
+          clojure -X:provided:test:github-actions-helper telegram-job-digest
 
 
   package:
@@ -78,27 +85,23 @@ jobs:
 
       # This reset settings.xml
       - name: Setup java
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v2
         with:
-          java-version: 11
-
-
+          distribution: 'zulu'
+          java-version: '11'
       - name: Preparation
         run: |
           cp .ci/settings.xml ~/.m2/settings.xml
           mvn dependency:get -Dartifact=org.apache.maven.plugins:maven-deploy-plugin:2.8
-
-
       - name: Set up clojure-cli
         uses: DeLaGuardo/setup-clojure@master
         with:
-          cli: '1.10.3.814'
+          cli: ${{ env.clojure-cli }}
 
 
       - name: Make package
-        env:
-          LIBRARY: ajchemist/environment
-        run: clojure -M:provided:test -m user.tools.deps.script.package -r $LIBRARY
+        run: |
+          clojure -T:provided:build jar :lib ${{ env.library }}
 
 
       - name: Deploy
@@ -113,19 +116,20 @@ jobs:
           git config --local user.name $GITHUB_ACTOR
           git config --local user.email $(git --no-pager show --format="<%ae>" -s HEAD)
           git add -- pom.xml
-          git commit -m "$(clojure -A:provided:test -m user.apache.maven.script.get-pom-version) [ci skip]"
+          git commit -m "$(clojure -X:build:maven-tool print-pom-version) [ci skip]"
           git remote -v
           git push
 
 
       - name: Job digest -> telegram
+        if: always()
         env:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           TELEGRAM_TO: ${{ secrets.TELEGRAM_TO }}
           JOB_CONTEXT: ${{ toJSON(job) }}
           GITHUB_CONTEXT: ${{ toJSON(github) }}
         run: |
-          clojure -X:provided:test github.core.alpha.actions-helper.telegram/send-job-digest
+          clojure -X:provided:test:github-actions-helper telegram-job-digest
 
 
       - uses: 8398a7/action-slack@v3.5.0
