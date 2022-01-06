@@ -1,6 +1,7 @@
 .clj-kondo/.cache
 .cpcache
 .eastwood
+.shadow-cljs
 .nrepl*
 # .ci/settings.xml
 classes

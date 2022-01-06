@@ -1,0 +1,9 @@
+{:deps {:aliases [:test :shadow-cljs]}
+
+ :builds
+ {:app {:target        :browser
+        :output-dir    "target/public/js"
+        :asset-path    "/js"
+        :modules       {:main {:entries [dev.app]}}
+        :build-options {:manifest-name "manifest.json"}
+        :build-hooks   [(hooks/print-build-state) (hooks/spit-build-state)]}}}
