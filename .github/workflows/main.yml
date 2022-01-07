@@ -9,7 +9,8 @@ on:
 
 
 env:
-  clojure-cli: "1.10.3.967"
+  clojure-cli: "1.10.3.1058"
+  java-version: "17"
   library: io.github.ajchemist/environment
 
 
@@ -19,9 +20,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        java: [ "11" ]
         clojure: [ "1.10" ]
-    name: test @ JDK = ${{ matrix.java }} CLJ = ${{ matrix.clojure }}
+    name: test @ CLJ = ${{ matrix.clojure }}
     steps:
       - uses: actions/checkout@v2
       - name: Cache local maven repository
@@ -42,9 +42,9 @@ jobs:
         uses: actions/setup-java@v2
         with:
           distribution: 'zulu'
-          java-version: ${{ matrix.java }}
+          java-version: ${{ env.java-version }}
       - name: Set up clojure-cli
-        uses: DeLaGuardo/setup-clojure@master
+        uses: DeLaGuardo/setup-clojure@3.7
         with:
           cli: ${{ env.clojure-cli }}
       - name: Test runner
@@ -94,7 +94,7 @@ jobs:
           cp .ci/settings.xml ~/.m2/settings.xml
           mvn dependency:get -Dartifact=org.apache.maven.plugins:maven-deploy-plugin:2.8
       - name: Set up clojure-cli
-        uses: DeLaGuardo/setup-clojure@master
+        uses: DeLaGuardo/setup-clojure@3.7
         with:
           cli: ${{ env.clojure-cli }}
 
