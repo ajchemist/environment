@@ -168,7 +168,7 @@
     (apply
       env.merge/merge-maps
       rules
-      (map (fn [src] (env/slurp-system-map src (:slurp-opts (meta src)))) sources))
+      (map (fn [src] (slurp-system-map src (:slurp-opts (meta src)))) sources))
     config))
 
 
@@ -180,7 +180,7 @@
 
 (defn- halt-system!
   []
-  (when-let [sys @env/*system]
+  (when-let [sys @*system]
     (ig/halt! sys)))
 
 
