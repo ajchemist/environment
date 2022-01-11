@@ -3,9 +3,15 @@ name: Lint
 
 on:
   push:
-    branches: [ master ]
+    paths:
+      - 'src/core/**/*.clj'
+      - 'src/core/**/*.cljs'
+      - 'src/core/**/*.cljc'
+    branches:
+      - master
   pull_request:
-    branches: [ master ]
+    branches:
+      - master
 
 
 env:

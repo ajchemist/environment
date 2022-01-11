@@ -3,9 +3,16 @@ name: Main CI
 
 on:
   push:
-    branches: [ master ]
+    paths:
+      - 'deps.edn'
+      - 'src/core/**/*.clj'
+      - 'src/core/**/*.cljs'
+      - 'src/core/**/*.cljc'
+    branches:
+      - master
   pull_request:
-    branches: [ master ]
+    branches:
+      - master
 
 
 env:
