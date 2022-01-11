@@ -4,8 +4,7 @@
    [clojure.java.io :as jio]
    [integrant.core :as ig]
    [environment.merge :as env.merge]
-
-   [environment.core :as env])
+   )
   (:import
    sun.misc.Signal
    sun.misc.SignalHandler
